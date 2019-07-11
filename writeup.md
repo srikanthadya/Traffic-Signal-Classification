@@ -1,17 +1,5 @@
 
-
-```
-from google.colab import drive
-drive.mount('/content/drive/')
-
-%cd /content/drive/'My Drive'/'All_Repos'/Self-Driving-Car-NanoDegree/CarND-Traffic-Sign-Classifier-Project/
-```
-
-    Drive already mounted at /content/drive/; to attempt to forcibly remount, call drive.mount("/content/drive/", force_remount=True).
-    /content/drive/My Drive/All_Repos/Self-Driving-Car-NanoDegree/CarND-Traffic-Sign-Classifier-Project
-
-
-## Step 1: Dataset Summary & Exploration
+## Dataset Summary & Exploration
 
 The German Traffic Sign Benchmark is a multi-class, single-image classification challenge held at the International Joint Conference on Neural Networks (IJCNN) 2011. This dataset consists of color channel images of shape (32,32,3) split into train, test and validation sets. The datasets are loaded from pickle dumps of resized images. There are 43 different classes of images as shown below. 
 
@@ -40,7 +28,7 @@ X_valid, y_valid = valid['features'], valid['labels']
 X_test, y_test = test['features'], test['labels']
 ```
 
-### Provide a Basic Summary of the Data Set Using Python, Numpy and/or Pandas
+## Basic Summary of the Data Set 
 
 
 ```
@@ -398,7 +386,7 @@ What appears to come out from these comparisons is that the normalized images, b
 
 ## Evaluating the model on Web Images
 
-8 images of German Traffic Signs were downloaded from the web. They were preprocessed to resize them to (32,32) sized images and passed to the model with the best fit. The results below shows that the model was able to predict  them well as long as the image is well curated and the traffic sign is cropped to occupy the entire image. For the last three images where the same traffic sign is just a part of the image, the predictions were not accurate and infact none of the top 5 predictions had the correct class. So, one of the limitations of the model is perhaps it doesn't account for all scales on the traffic sign. Also, warped image was also not predicted well. Perhaps, augmenting all classes , and not just the sparce classes, could be beneficial to overcome this limitation. Also, the image scales should be purturbed as part of the i
+8 images of German Traffic Signs were downloaded from the web. They were preprocessed to resize them to (32,32) sized images and passed to the model with the best fit. The results below shows that the model was able to predict  them well as long as the image is well curated and the traffic sign is cropped to occupy the entire image. For the last three images where the same traffic sign is just a part of the image, the predictions were not accurate and infact none of the top 5 predictions had the correct class. So, one of the limitations of the model is perhaps it doesn't account for all scales on the traffic sign. Also, warped image was also not predicted well. Perhaps, augmenting all classes , and not just the sparce classes, could be beneficial to overcome this limitation. Also, the image scales should be perturbed as part of the image augmentation pipeline. 
 
 
 ```
@@ -449,24 +437,3 @@ plt.show()
 Using the pretrained model the top-5 predictions were as shown
 
 <center><img src="https://docs.google.com/uc?export=download&id=11P20MTst63wVRMqUpqzN6w4Cd9UA7P8n" width=700 /> </center>
-
-
-
-```
-!jupyter nbconvert Traffic-Sign-Classifier.ipynb --to markdown
-```
-
-    [NbConvertApp] Converting notebook Traffic-Sign-Classifier.ipynb to markdown
-    [NbConvertApp] Support files will be in Traffic-Sign-Classifier_files/
-    [NbConvertApp] Making directory Traffic-Sign-Classifier_files
-    [NbConvertApp] Making directory Traffic-Sign-Classifier_files
-    [NbConvertApp] Making directory Traffic-Sign-Classifier_files
-    [NbConvertApp] Making directory Traffic-Sign-Classifier_files
-    [NbConvertApp] Making directory Traffic-Sign-Classifier_files
-    [NbConvertApp] Writing 15696 bytes to Traffic-Sign-Classifier.md
-
-
-
-```
-
-```
