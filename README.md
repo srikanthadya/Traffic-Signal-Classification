@@ -1,7 +1,15 @@
 
-# Traffic Signal Classification 
-This repo has my solution to the German Traffic Signal classification Project-2 from the Udacity Self Driving Car nanodegree course. 
-The broad outline is discussed below. 
+
+```
+from google.colab import drive
+drive.mount('/content/drive/')
+
+%cd /content/drive/'My Drive'/'All_Repos'/Self-Driving-Car-NanoDegree/CarND-Traffic-Sign-Classifier-Project/
+```
+
+    Drive already mounted at /content/drive/; to attempt to forcibly remount, call drive.mount("/content/drive/", force_remount=True).
+    /content/drive/My Drive/All_Repos/Self-Driving-Car-NanoDegree/CarND-Traffic-Sign-Classifier-Project
+
 
 ## Step 1: Dataset Summary & Exploration
 
@@ -352,10 +360,45 @@ CNNs have several hyper parameters that contribute to their performance. Hyper p
 |  | 0.0006 | 175 | 0.5 | 0.01 | 0.991 | 0.950 | 0.94 | underfitting
 |  | 0.0006 | 175 | 0.5 | 0.1 | 0.925 | 0.896 | 0.905 | Very noisy ,underfitting|
 
+## Effect of Image Normalization
+
+The above accuracy results were obtained from a model in which the input images were inadvertantly not normalized. Normalizing the input images is a popular technique employed in deep learning and often leads to faster convergence of the model. The reason being, weight updates in a neural network happens through back propagation. During back propagation the the weights are corrected by subtracting "learning_rate * gradient" factor from the previous weight and thus takes a step towards the minima of the loss function surface. If the features are not normalized, each feature could be of a different scale and hence the gradients might be of varing scales as well.  Thus one single learning rate might not be sufficient to make the opimizer move towards the minima in all directions. This causes the convergence to be much slower. One option  would be to use a different learning rate in each direction but that increases the number of hyper-parameters that needs to be tuned and infact profibitive since the loss surface has thousands of dimensions. The effect of normalization is more pronounced in datasets which have large varations in the feature scales. 
+
+There are several ways to normalize an input image. The two common approaches being
+
+1. Zeroing out the mean and normalizing the variance. 
+
+<center><a href="https://www.codecogs.com/eqnedit.php?latex=x_{norm}&space;=&space;\frac{x&space;-&space;\mu}{\sigma}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?x_{norm}&space;=&space;\frac{x&space;-&space;\mu}{\sigma}" title="x_{norm} = \frac{x - \mu}{\sigma}" /></a></center>
+
+2. Normalizing by converting the bounds of the image to lie between [-1, 1]
+
+<center><a href="https://www.codecogs.com/eqnedit.php?latex=x_{norm}&space;=&space;\frac{x&space;-&space;128.}{128.}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?x_{norm}&space;=&space;\frac{x&space;-&space;128.}{128.}" title="x_{norm} = \frac{x - 128.}{128.}" /></a></center>
+
+
+
+The normalized gray scale images after mean subtraction are shown below
+
+<center><img src="https://docs.google.com/uc?export=download&id=1C7lxvIG6XldIBYCNiKZtA-HazpknamFm" width=500 /> </center>
+
+
+The image below shows the convergence with and without image normalization.
+
+|     Non - Normalized Convergence      |    Gray Normalized Convergence  |  Color Normalized Convergence |
+|:----------------------------------------------------------:|:----------------------------------------------------:|:---------------------------------------------------:|
+|<img src="https://docs.google.com/uc?export=download&id=13DWUL1Kl_ucylDgaa45WM2cHCWalRyTC" width=250 /> |<img src="https://docs.google.com/uc?export=download&id=154zpmDJiH7jDWI-oe-SYmMh984JPyNub" width=250 />|<img src="https://docs.google.com/uc?export=download&id=1ERH8WmceaoBx_BkruT6rjoVAYDd4cqIH" width=250 />
+
+
+|                  |     Lerning Rate   |    Epoch     |    Keep Prob    |   Beta    |   Train Accuracy |Validation Accuracy | Test Accuracy | Comment | 
+|:--------------:|:--------------------------:|:----------------:|:----------------------:|:------------:|:----------------------------------:|:-----------------------:|:-----------------------:|:-----------------------:|
+|**No Normalization**  |  **0.0004**  | **150** | **0.5** | **0.001**|**0.999** | **0.972** | **0.962** | **Best fit**
+| Gray Normalized  |   0.0004  | 150 | 0.5 | 0.001|0.999 | 0.961 | 0.955 | lower test accuracy
+| Color Normalized  |   0.0004  | 150 | 0.5 | 0.001|0.999 | 0.963 | 0.953 | lower test accuracy
+
+What appears to come out from these comparisons is that the normalized images, be it gray scale or color, seem to have a smaller ramp time to reach the expected accuracy and hence a potential faster convergence. The normalized inputs start off with a validation accuracy of > 70% in both cases whereas the non normalized input starts with a validation accuracy of ~ 5% at the end of the first Epoch. But it quickly ramps up and catches up with the normalized inputs. For this dataset to reach a validation accuracy of 96% I had to run the model for at least 150 epochs. So, either approach did not have any significat difference in time.  This probably is due to the fact that although there are 43 different classes in the dataset, the images still have a comparable feature range. One noticable difference though is that the non-normalized inputs resulted in a slightly improved accuracy. Hence this implementation uses the non-normalized input approach.  Also, using the RGB color space was found to result in a slight accuracy improvement and hence the images are not converted to gray scale. 
 
 ## Evaluating the model on Web Images
 
-5 images of German Traffic Signs were downloaded from the web. They were preprocessed to resize them to (32,32) sized images and passed to the model with the best fit. The results below shows that the model was able to predict all 5 images properly 
+8 images of German Traffic Signs were downloaded from the web. They were preprocessed to resize them to (32,32) sized images and passed to the model with the best fit. The results below shows that the model was able to predict  them well as long as the image is well curated and the traffic sign is cropped to occupy the entire image. For the last three images where the same traffic sign is just a part of the image, the predictions were not accurate and infact none of the top 5 predictions had the correct class. So, one of the limitations of the model is perhaps it doesn't account for all scales on the traffic sign. Also, warped image was also not predicted well. Perhaps, augmenting all classes , and not just the sparce classes, could be beneficial to overcome this limitation. Also, the image scales should be purturbed as part of the i
 
 
 ```
@@ -372,10 +415,10 @@ df = pd.read_csv("signnames.csv")
 img_paths = os.listdir('./web_images')
 
 images = list()
-labels = np.array([23,12,27,11,13])
+labels = np.array([23,12,27,13,11,13,21,26])
 count=0
 
-fig,axs = plt.subplots(3,2,figsize=(10,7))
+fig,axs = plt.subplots(3,3,figsize=(10,7))
 count = 0
 for im_pth in img_paths:
 
@@ -389,8 +432,8 @@ for im_pth in img_paths:
 images = np.array(images)
 count = 0
 for i in range(3):
-  for j in range(2):
-    if count < 5:
+  for j in range(3):
+    if count < 8:
       axs[i][j].imshow(images[count])
       axs[i][j].set_title(df.SignName.iloc[labels[count]])
       count+=1
@@ -405,9 +448,25 @@ plt.show()
 
 Using the pretrained model the top-5 predictions were as shown
 
-<center><img src="https://docs.google.com/uc?export=download&id=1dkQSAbAqEH5W2gkMbnx9hDSK5KKD9WBL" width=700 /> </center>
+<center><img src="https://docs.google.com/uc?export=download&id=11P20MTst63wVRMqUpqzN6w4Cd9UA7P8n" width=700 /> </center>
+
 
 
 ```
-!jupyter nbconvert Traffic-Sign-Classifier.ipynb --ma
+!jupyter nbconvert Traffic-Sign-Classifier.ipynb --to markdown
+```
+
+    [NbConvertApp] Converting notebook Traffic-Sign-Classifier.ipynb to markdown
+    [NbConvertApp] Support files will be in Traffic-Sign-Classifier_files/
+    [NbConvertApp] Making directory Traffic-Sign-Classifier_files
+    [NbConvertApp] Making directory Traffic-Sign-Classifier_files
+    [NbConvertApp] Making directory Traffic-Sign-Classifier_files
+    [NbConvertApp] Making directory Traffic-Sign-Classifier_files
+    [NbConvertApp] Making directory Traffic-Sign-Classifier_files
+    [NbConvertApp] Writing 15696 bytes to Traffic-Sign-Classifier.md
+
+
+
+```
+
 ```
