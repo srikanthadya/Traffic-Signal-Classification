@@ -1,17 +1,4 @@
-
-
-```
-from google.colab import drive
-drive.mount('/content/drive/')
-
-%cd /content/drive/'My Drive'/'All_Repos'/Self-Driving-Car-NanoDegree/CarND-Traffic-Sign-Classifier-Project/
-```
-
-    Drive already mounted at /content/drive/; to attempt to forcibly remount, call drive.mount("/content/drive/", force_remount=True).
-    /content/drive/My Drive/All_Repos/Self-Driving-Car-NanoDegree/CarND-Traffic-Sign-Classifier-Project
-
-
-## Step 1: Dataset Summary & Exploration
+## Dataset Summary & Exploration
 
 The German Traffic Sign Benchmark is a multi-class, single-image classification challenge held at the International Joint Conference on Neural Networks (IJCNN) 2011. This dataset consists of color channel images of shape (32,32,3) split into train, test and validation sets. The datasets are loaded from pickle dumps of resized images. There are 43 different classes of images as shown below. 
 
@@ -40,8 +27,7 @@ X_valid, y_valid = valid['features'], valid['labels']
 X_test, y_test = test['features'], test['labels']
 ```
 
-### Provide a Basic Summary of the Data Set Using Python, Numpy and/or Pandas
-
+### Basic Summary of the Data Set 
 
 ```
 import numpy as np
